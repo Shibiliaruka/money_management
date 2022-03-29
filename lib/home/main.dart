@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:management/screen_home.dart';
+import 'package:management/screen/screen_home.dart';
 
 void main() => runApp(money());
 

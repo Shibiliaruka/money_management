@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:management/screen_home.dart';
+import 'package:management/screen/screen_home.dart';
 
 class navi extends StatelessWidget {
   const navi({Key? key}) : super(key: key);
@@ -12,9 +12,9 @@ class navi extends StatelessWidget {
           return BottomNavigationBar(
               items: [
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.category), label: 'Category'),
+                    icon: Icon(Icons.category), label: 'category'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.transit_enterexit), label: 'Category'),
+                    icon: Icon(Icons.transit_enterexit), label: 'transaction'),
               ],
               onTap: (int index) {
                 screenhome.selectedindexnotifier.value = index;
