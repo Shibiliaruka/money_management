@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:management/add_transaction/screen_add_transaction.dart';
+import 'package:management/model/category/category_model.dart';
 import 'package:management/screen/screen_home.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() => runApp(money());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+  if (!Hive.isAdapterRegistered(CategoryModelAdapter().typeId)) {
+    Hive.registerAdapter(CategoryModelAdapter());
+  }
+  if (!Hive.isAdapterRegistered(CategoryTypeAdapter().typeId)) {
+    Hive.registerAdapter(CategoryTypeAdapter());
+  }
+  runApp(const money());
+}
 
 class money extends StatelessWidget {
   const money({Key? key}) : super(key: key);
@@ -9,10 +24,12 @@ class money extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: screenhome(),
-    );
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: screenhome(),
+        routes: {
+          screenaddTransaction.routeName: (ctx) => const screenaddTransaction(),
+        });
   }
 }

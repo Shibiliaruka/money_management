@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:management/add_transaction/screen_add_transaction.dart';
+import 'package:management/category/category_add_popup.dart';
+import 'package:management/db/category/category_db.dart';
 import 'package:management/home/bottom_navigation.dart';
-import 'package:management/category/screen_category.dart';
+import 'package:management/screen/screen_category.dart';
+import 'package:management/model/category/category_model.dart';
 import 'package:management/screen/screen_transaction.dart';
 
 class screenhome extends StatelessWidget {
@@ -25,9 +29,18 @@ class screenhome extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (selectedindexnotifier.value == 0) {
-            print('transaction');
-          } else {
             print('category');
+            showCategoryAddPopup(context);
+
+            // final _sample = CategoryModel(
+            //     id: DateTime.now().millisecondsSinceEpoch.toString(),
+            //     name: 'Travel',
+            //     type: CategoryType.expense);
+            // CategoryDB().insertCategory(_sample);
+            // showCategoryAddPopup(context);
+          } else {
+            print('transaction');
+            Navigator.of(context).pushNamed(screenaddTransaction.routeName);
           }
         },
         child: Icon(Icons.add),
