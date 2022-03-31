@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:management/db/category/category_db.dart';
+import 'package:management/db/transaction/transaction_db.dart';
 import 'package:management/model/category/category_model.dart';
+import 'package:management/model/transaction/transaction_model.dart';
+import 'package:management/model/transaction/transaction_model.dart';
 
 class screenaddTransaction extends StatefulWidget {
   const screenaddTransaction({Key? key}) : super(key: key);
@@ -17,6 +20,8 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
   CategoryModel? _selectedCategoryModel;
 
   String? _categoryID;
+  final _purposeTextEditingController = TextEditingController();
+  final _amountTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -35,9 +40,11 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
           children: [
             TextFormField(
               keyboardType: TextInputType.text,
+              controller: _purposeTextEditingController,
               decoration: InputDecoration(hintText: 'Purpuse'),
             ),
             TextFormField(
+              controller: _amountTextEditingController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(hintText: 'Amount'),
             ),
@@ -49,7 +56,7 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
                 final _selectDateTemp = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
-                  firstDate: DateTime.now().subtract(const Duration(days: 30)),
+                  firstDate: DateTime.now().subtract(const Duration(days: 712)),
                   lastDate: DateTime.now(),
                 );
                 if (_selectDateTemp == null) {
@@ -92,7 +99,6 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
                       onChanged: (newValue) {
                         setState(() {
                           _selectedCategorytype = CategoryType.expense;
-                          _categoryID = null;
                         });
                       },
                     ),
@@ -110,7 +116,13 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
                         : CategoryDB().expenseCategoryListListener)
                     .value
                     .map((e) {
-                  return DropdownMenuItem(value: e.id, child: Text(e.name));
+                  return DropdownMenuItem(
+                    value: e.id,
+                    child: Text(e.name),
+                    onTap: () {
+                      _selectedCategoryModel = e;
+                    },
+                  );
                 }).toList(),
                 onChanged: (selectedValue) {
                   print(selectedValue);
@@ -122,12 +134,50 @@ class _screenaddTransactionState extends State<screenaddTransaction> {
             //submit
 
             ElevatedButton(
-              onPressed: () {},
-              child: Text('Submit'),
+              onPressed: () {
+                addtransaction();
+              },
+              child: const Text('Submit'),
             )
           ],
         ),
       )),
     );
+  }
+
+  Future<void> addtransaction() async {
+    final _purposeText = _purposeTextEditingController.text;
+    final _amountText = _amountTextEditingController.text;
+    if (_purposeText.isEmpty) {
+      return;
+    }
+    if (_amountText.isEmpty) {
+      return;
+    }
+    // if (_categoryID == null) {
+    //   return;
+    // }
+    if (_selectedDate == null) {
+      return;
+    }
+
+    if (_selectedCategoryModel == null) {
+      return;
+    }
+
+    final _parsedAmount = double.tryParse(_amountText);
+    if (_parsedAmount == null) {
+      return;
+    }
+    final _model = TransactionModel(
+        purpose: _purposeText,
+        amount: _parsedAmount,
+        date: _selectedDate!,
+        type: _selectedCategorytype!,
+        category: _selectedCategoryModel!);
+
+    await TransactionDB.instance.addTransaction(_model);
+    Navigator.of(context).pop();
+    TransactionDB.instance.refresh();
   }
 }
